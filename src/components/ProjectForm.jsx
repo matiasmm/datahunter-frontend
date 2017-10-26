@@ -8,10 +8,6 @@ import 'brace/theme/monokai';
 
 const stateUnsaved = {}
 
-window.x = function() {
-    console.log(stateUnsaved);
-}
-
 export class ProjectForm extends Component {
 
     state = {

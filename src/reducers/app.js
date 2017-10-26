@@ -4,8 +4,13 @@ export default function reducer(state={projects:[], tabs: [], activeItem: 'dashb
         case "MENU.CREATE_PROJECT":
             // tabs
             const opened = state.tabs.findIndex((e)=> e.type == 'project' && e.project == undefined);
-            return (opened != -1)? {...state, tabs: activateTab(state, opened)} :
-                {...state, tabs: [...state.tabs, {type: 'project', menuDsc: 'new project', active: true}]};
+            if (opened != -1) {
+                return {...state, tabs: activateTab(state, opened)};
+            } else {
+                return {...state, tabs: [...state.tabs.map((t, i) => ({...t, active: false})),
+                    {type: 'project', menuDsc: 'new project', active: true}]};
+            }
+
             break;
         case "MENU.SET_ACTIVE_ITEM":
             // activeItem
@@ -23,6 +28,10 @@ export default function reducer(state={projects:[], tabs: [], activeItem: 'dashb
             // project tabs
             return editProject(state, action);
         break;
+        case "PROJECT.PROJECTS_LOADED":
+            // project tabs
+            return {...state, projects: action.projects};
+            break;
         case "TAB.ACTIVATE":
             // tabs
             return {...state, tabs: state.tabs.map((t, i) => ({...t, active: i == action.index})) };
@@ -51,7 +60,7 @@ function openProject(state, action) {
         if (opened != -1) {
             return {...state, tabs: activateTab(state, opened)};
         }
-        return {...state, tabs: [...state.tabs, {project, type: 'project', menuDsc: project.name}]}
+        return {...state, tabs: [...state.tabs, {project, type: 'project', menuDsc: project.name, active: true}]}
     }
     return state;
 }

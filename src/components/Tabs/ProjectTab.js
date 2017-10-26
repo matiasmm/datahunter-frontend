@@ -3,7 +3,7 @@ import ProjectForm from '../ProjectForm';
 import { Tab, Menu, Icon } from 'semantic-ui-react';
 import { connect } from 'react-redux';
 import propTypes from 'prop-types';
-import v1 from 'uuid/v1';
+import { createProject, editProject } from '../../actions/project';
 
 
 function ProjectTab(props) {
@@ -66,20 +66,12 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 
         });
     },
-    onSubmit: (newProject) => {
-        if (newProject.id) {
-            dispatch({
-                type: 'PROJECT.EDIT',
-                project: newProject,
-                tabPos: ownProps.tabPos
-            });
+    onSubmit: (project) => {
+        if (project.id) {
+            return dispatch(editProject(project, ownProps.tabPos));
         } else {
-            newProject.id = v1();
-            dispatch({
-                type: 'PROJECT.NEW',
-                project: newProject,
-                tabPos: ownProps.tabPos
-            });
+            delete project.id;
+            return dispatch(createProject(project, ownProps.tabPos));
         }
     }
 });

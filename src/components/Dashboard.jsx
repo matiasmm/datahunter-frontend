@@ -11,7 +11,8 @@ const classesMap = {
 
 function createTab(tab, i) {
     const {type, menuDsc} = tab;
-    return { menuItem: menuDsc, render: () => React.createElement(classesMap[type], {...tab, key: i, tabPos: i}) }
+    return { menuItem: { content: (<div>{menuDsc}</div>) }, render: () =>
+        React.createElement(classesMap[type], {...tab, key: i, tabPos: i}) }
 }
 
 export function Dashboard({activeItem, tabs, onTabChange}) {
@@ -29,7 +30,7 @@ export function Dashboard({activeItem, tabs, onTabChange}) {
 }
 
 Dashboard.propTypes = {
-    activeItem: propTypes.string.isRequired,
+    activeItem: propTypes.oneOfType([propTypes.string, propTypes.number]),
 }
 
 function mapStateToProps(state) {

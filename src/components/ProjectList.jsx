@@ -13,7 +13,7 @@ export function ProjectList(props)  {
 
 ProjectList.propTypes = {
     projects: propTypes.array.isRequired,
-    activeItem: propTypes.string
+    activeItem: propTypes.oneOfType([propTypes.string, propTypes.number])
 }
 
 const mapStateToProps = state => {
