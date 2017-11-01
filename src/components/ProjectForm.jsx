@@ -6,7 +6,7 @@ import AceEditor from 'react-ace';
 import 'brace/mode/java';
 import 'brace/theme/monokai';
 
-const stateUnsaved = {}
+const stateUnsaved = {};
 
 export class ProjectForm extends Component {
 
@@ -37,14 +37,14 @@ export class ProjectForm extends Component {
     onSubmit = (evt) => {
         stateUnsaved[this.state.fields.id] = undefined;
         const project = {...this.state.fields}
-        let result = this.props.onSubmit(project);
+        this.props.onSubmit(project);
         evt.preventDefault();
     }
 
     onChangeField = (name) => {
         return (evt) => {
             let state = { ...this.state};
-            state.fields[name] = typeof evt == "string" ? evt: evt.target.value;
+            state.fields[name] = typeof evt === "string" ? evt: evt.target.value;
             this.setState(state);
             stateUnsaved[this.state.fields.id] = this.state;
         }
