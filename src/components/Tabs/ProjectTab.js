@@ -3,16 +3,22 @@ import {Tab, Menu, Icon} from 'semantic-ui-react';
 import {connect} from 'react-redux';
 import propTypes from 'prop-types';
 import ProjectForm from '../ProjectForm';
-import {newProject, editProject} from '../../modules/projects';
+import {newProject, editProject, deleteProject} from '../../modules/projects';
 import {setTabIsEdit} from '../../modules/tabs';
 
 
 function ProjectTab(props) {
     const menu = () => (<Menu icon>
         <Menu.Item name="write" onClick={() => {
-            props.onClickEdit()
+            props.onClickEdit();
         }}>
             <Icon name="write"/>
+        </Menu.Item>
+
+        <Menu.Item name="trash" onClick={() => {
+            props.onClickDelete();
+        }}>
+            <Icon name="trash"/>
         </Menu.Item>
 
         <Menu.Item name="play" onClick={() => {
@@ -20,10 +26,6 @@ function ProjectTab(props) {
             <Icon name="play"/>
         </Menu.Item>
 
-        <Menu.Item name="video play" onClick={() => {
-        }}>
-            <Icon name="video play"/>
-        </Menu.Item>
     </Menu>);
 
     let content;
@@ -60,6 +62,11 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     dispatch,
     onClickEdit: () => {
         dispatch(setTabIsEdit(ownProps.tabPos, true));
+    },
+    onClickDelete: () => {
+        if (window.confirm('Are you sure you want to delete this project')) {
+            dispatch(deleteProject(ownProps.project.id));
+        }
     }
 });
 
@@ -73,10 +80,11 @@ const mergeProps = (stateProps, dispatchProps) => ({
         }
 
         if (project.id) {
-            return dispatchProps.dispatch(editProject(project));
+            dispatchProps.dispatch(editProject(project));
+        } else {
+            delete project.id;
+            dispatchProps.dispatch(newProject(project, stateProps.tabPos));
         }
-        delete project.id;
-        return dispatchProps.dispatch(newProject(project));
     }
 });
 

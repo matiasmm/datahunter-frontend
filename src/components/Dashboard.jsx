@@ -1,9 +1,9 @@
 import React from 'react';
 import propTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Tab } from 'semantic-ui-react';
+import { Tab, Menu, Icon } from 'semantic-ui-react';
 import ProjectTab from './Tabs/ProjectTab';
-import { activateTab } from '../modules/tabs';
+import { activateTab, closeTab } from '../modules/tabs';
 import { getDashboard } from '../modules/selectors';
 
 const classesMap = {
@@ -18,18 +18,18 @@ const classesMap = {
   }
 };
 
-function createTab(tab, i) {
+function createTab(tab, i, onTabClose) {
   const { type } = tab;
   return {
-    menuItem: { content: (<div>{classesMap[type].getTitle(tab)}</div>) },
+    menuItem: <Menu.Item key={i}>{classesMap[type].getTitle(tab)}<Icon name="close" onClick={(e)=> onTabClose(e, i)}/></Menu.Item>,
     render: () =>
-      React.createElement(classesMap[type]['contentClass'], { ...tab, key: i, tabPos: i })
+      React.createElement(classesMap[type]['contentClass'], { ...tab, tabPos: i })
   };
 }
 
-export function Dashboard({ tabs, onTabChange }) {
+export function Dashboard({ tabs, onTabChange, onTabClose }) {
   const renderDashboard = () => (<div>Dashboard</div>),
-        renderTabs = () => tabs.tabList.map((e, i) => createTab(e, i));
+        renderTabs = () => tabs.tabList.map((e, i) => createTab(e, i, onTabClose));
   return tabs.tabList.length ? <Tab onTabChange={onTabChange} panes={renderTabs()} activeIndex={tabs.activeTab} /> : renderDashboard();
 }
 
@@ -45,6 +45,9 @@ function mapDispatchToProps(dispatch) {
   return {
     onTabChange: (e, data) => {
       dispatch(activateTab(data.activeIndex));
+    },
+    onTabClose: (e, tabPos) => {
+      dispatch(closeTab(tabPos));
     }
   };
 }

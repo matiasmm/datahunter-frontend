@@ -34,20 +34,31 @@ export default (tabsState = {'tabList': [], 'activeTab': undefined}, action) => 
             return {...tabsState, activeTab: opened};
 
         }
+        case types.TABS_CLOSE: {
+            return {...tabsState, tabList: [...tabsState.tabList.slice(0, action.tabPos),
+                ...tabsState.tabList.slice(action.tabPos+1, tabsState.tabList.length)], activeTab: 0};
+        }
+
+        case types.PROJECT_DELETE: {
+            let tabPos = tabsState.tabList.findIndex((t) => action.id == t.projectId);
+            return (tabPos !== -1)? {...tabsState, tabList: [...tabsState.tabList.slice(0, tabPos),
+                  ...tabsState.tabList.slice(tabPos+1, tabsState.tabList.length)], activeTab: 0}
+                : tabsState;
+        }
         case types.TABS_ACTIVATE: {
-            return {...tabsState, activeTab: action.index};
+            let activeTab = (action.index < tabsState.tabList.length)? action.index : 0;
+            return {...tabsState, activeTab };
         }
         case types.PROJECT_NEW:
         case types.PROJECT_EDIT:{
-            tabsState.tabList.map((t, i) => {
-                if (action.tabPos === i) {
-                    t.menuDsc = action.project.name;
+            let tabList = tabsState.tabList.map((t, i) => {
+                if (action.tabPos === i || (t.projectId !== undefined && t.projectId === action.project.id)) {
                     t.projectId = action.project.id;
-                    t.isEdit = true;
+                    t.isEdit = false;
                 }
                 return {...t};
             });
-            return {...tabsState, 'tabList': tabsState.tabList};
+            return {...tabsState, tabList};
         }
         case types.TABS_SET_EDIT_MODE: {
             return {...tabsState, tabList: tabSetIsEdit(tabsState.tabList, action.index, action.isEdit)};
@@ -83,6 +94,13 @@ export function setTabIsEdit(index, isEdit) {
         type: types.TABS_SET_EDIT_MODE,
         index,
         isEdit
+    };
+}
+
+export function closeTab(tabPos) {
+    return {
+        type: types.TABS_CLOSE,
+        tabPos
     };
 }
 

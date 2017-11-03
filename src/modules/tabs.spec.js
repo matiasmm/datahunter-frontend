@@ -1,4 +1,4 @@
-import reducer, {openCreateProject, openProject, activateTab, setTabIsEdit } from './tabs';
+import reducer, {openCreateProject, openProject, activateTab, setTabIsEdit, closeTab } from './tabs';
 
 
 describe('Tabs reducer', () => {
@@ -17,7 +17,7 @@ describe('Tabs reducer', () => {
     describe('openProject()', () => {
         it('open project tab success', () => {
             expect(reducer(undefined, openProject(1)))
-                .toEqual({activeTab: 0, tabList:[{type: 'project', menuDsc: 'project', projectId: 1}]});
+                .toEqual({activeTab: 0, tabList:[{type: 'project', menuDsc: 'project-1', projectId: 1}]});
         });
         it('open project activates tab success', () => {
             expect(reducer({activeTab: undefined, tabList:[{type: 'project', menuDsc: 'project', projectId: 1}]},
@@ -31,12 +31,11 @@ describe('Tabs reducer', () => {
             expect(reducer({activeTab: undefined, tabList: [{type: 'project', menuDsc: 'tab1'}]}, activateTab(0)))
                 .toEqual({activeTab: 0, tabList: [{type: 'project', menuDsc: 'tab1'}]});
         });
-        it('activate exceeded index', () => {
+        it('activate exceeded index should return 0', () => {
             expect(reducer({activeTab: undefined, tabList: [{type: 'project', menuDsc: 'tab1'}]}, activateTab(1)))
-                .toEqual({activeTab: 1, tabList: [{type: 'project', menuDsc: 'tab1'}]});
+                .toEqual({activeTab: 0, tabList: [{type: 'project', menuDsc: 'tab1'}]});
         });
     });
-
 
     describe('setTabIsEdit()', () => {
         it('set tab 0 isEdit=true', () => {
@@ -49,4 +48,10 @@ describe('Tabs reducer', () => {
         });
     });
 
+    describe('closeTab()', () => {
+        it('success', () => {
+            expect(reducer({activeTab: undefined, tabList: [{type: 'project', menuDsc: 'tab1'}]}, closeTab(0)))
+                .toEqual({activeTab: 0, tabList: []});
+        });
+    });
 });
